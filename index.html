@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate AI Chat</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0a0f24, #1a2340);
+      font-family: Arial, sans-serif;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .header {
+      text-align: center;
+      padding: 30px 10px;
+      font-size: 32px;
+      font-weight: bold;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 850px;
+      margin: auto;
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 14px;
+      backdrop-filter: blur(10px);
+      animation: slideUp 1s ease-in-out;
+      min-height: 70vh;
+    }
+
+    .msg {
+      margin-bottom: 15px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      width: fit-content;
+      max-width: 70%;
+      animation: popUp 0.3s ease-in-out;
+    }
+
+    .me {
+      background: #0a84ff;
+      margin-left: auto;
+    }
+
+    .ai {
+      background: #333;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 15px 20px;
+      border: none;
+      background: #0a84ff;
+      color: white;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    button:hover {
+      background: #0066cc;
+      transform: scale(1.05);
+    }
+
+    footer {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+      padding-bottom: 20px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popUp {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">✨ Ultimate Animated AI Chat ✨</div>
+
+  <div class="chat-container" id="chatBox"></div>
+
+  <div class="input-area">
+    <input id="msgInput" placeholder="اكتب رسالتك..." />
+    <button onclick="sendMsg()">Send</button>
+  </div>
+
+  <footer>Project by Mohamed Bahaa & Rotaj Mohamed</footer>
+
+  <script>
+    async function sendMsg() {
+      const input = document.getElementById("msgInput");
+      const chatBox = document.getElementById("chatBox");
+
+      if (input.value.trim() === "") return;
+
+      // Add user message
+      const userMsg = document.createElement("div");
+      userMsg.className = "msg me";
+      userMsg.textContent = input.value;
+      chatBox.appendChild(userMsg);
+
+      const userText = input.value;
+      input.value = "";
+
+      // AI loading bubble
+      const aiMsg = document.createElement("div");
+      aiMsg.className = "msg ai";
+      aiMsg.textContent = "Typing...";
+      chatBox.appendChild(aiMsg);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Fetch AI response
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userText })
+      });
+
+      const data = await res.json();
+
+      aiMsg.textContent = data.reply;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
